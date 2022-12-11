@@ -17,7 +17,13 @@ input :: Show a => ([(Dir, Int)] -> a) -> IO ()
 input f  = readFile ".\\input.txt"  >>= print . f . fromJust . runParser (many parseMove)
 
 parseMove :: Parser (Dir, Int)
-parseMove = curry (bimap (read . return) read) <$> asum (char <$> "RULD") <* many space <*> many digit <* char '\n'
+parseMove = curry (bimap (read . return) read) <$> asum (char <$> "RULD") <* many space <*> some digit <* many (char '\n')
+
+solve1 :: ([(Dir, Int)] -> Int)
+solve1 dirs = length $ nub $ execWriter $ move (0,0) (0,0) dirs
+
+solve2 :: ([(Dir, Int)] -> Int)
+solve2 dirs = length $ nub $ execWriter $ move10 (replicate 10 (0,0)) dirs
 
 move :: Pos -> Pos -> [(Dir, Int)] -> Writer [Pos] ()
 move ph       pt []          = return ()
@@ -50,12 +56,6 @@ dir R = second succ
 dir U = first succ
 dir L = second pred
 dir D = first pred
-
-solve1 :: ([(Dir, Int)] -> Int)
-solve1 dirs = length $ nub $ execWriter $ move (0,0) (0,0) dirs
-
-solve2 :: ([(Dir, Int)] -> Int)
-solve2 dirs = length $ nub $ execWriter $ move10 (replicate 10 (0,0)) dirs
 
 move10 :: [Pos] -> [(Dir, Int)] -> Writer [Pos] ()
 move10 (p:ps) []  = return ()
