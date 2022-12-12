@@ -55,3 +55,10 @@ parseInt = (negate <$> (char '-' *> parsePositiveInt))
 
 parsePositiveInt :: Parser Int
 parsePositiveInt =  read <$> some digit
+
+parseInteger :: Parser Integer
+parseInteger = (negate <$> (char '-' *> parsePositiveInteger))
+        <|> parsePositiveInteger
+
+parsePositiveInteger :: Parser Integer
+parsePositiveInteger =  read <$> some digit
