@@ -13,7 +13,7 @@ main :: IO ()
 main = input (solve 20 (`div` 3)) >> input (solve2 10000)
 
 input :: Show a => ([Monkey] -> a) -> IO ()
-input f  = readFile ".\\input.txt"  >>= print . f . fromJust . runParser (some parseMonke)
+input f = readFile ".\\input.txt"  >>= print . f . fromJust . runParser (some parseMonke)
 
 parseMonke :: Parser Monkey
 parseMonke = do
