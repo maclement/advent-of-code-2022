@@ -5,7 +5,6 @@ import Data.Maybe (fromJust)
 import Parser
 import Control.Monad.State
 import Control.Monad
-import Debug.Trace
 
 -- Note that the computation took around 40 min so this approach was not very efficient
 main :: IO ()
@@ -51,7 +50,7 @@ sandFall maxY (x, y)
         _       -> modify (Set.insert (x, y)) >> return False 
    
 isFree :: (Int, Int) -> State (Set (Int, Int)) Bool
-isFree p = notElem p <$> get
+isFree p = Set.notMember p <$> get
 
 solve2 :: [(Int, Int)] -> Int
 solve2 list = evalState (untilFull (2 + (maximum $ map snd list))) (Set.fromList list)  
@@ -67,7 +66,7 @@ untilFull barrier = do
 
 sandFall2 :: Int -> (Int, Int) -> State (Set (Int, Int)) ()
 sandFall2 barrier (x, y)
-  | succ y >= barrier = trace "Dropped on the barrier" modify (Set.insert (x, y))
+  | succ y >= barrier = modify (Set.insert (x, y))
   | otherwise = do
     b <- isFree (x, succ y)
     b' <- isFree (pred x, succ y)
@@ -76,4 +75,4 @@ sandFall2 barrier (x, y)
         _ | b   -> sandFall2 barrier (x, succ y)
           | b'  -> sandFall2 barrier (pred x, succ y)
           | b'' -> sandFall2 barrier (succ x, succ y)
-        _       -> trace ("Dropped at position: " ++ show x ++ ", " ++ show y) $ modify (Set.insert (x, y)) 
+        _       -> modify (Set.insert (x, y)) 
